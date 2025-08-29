@@ -1,0 +1,213 @@
+{
+  "name": "schedule",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e49ca9f0-5194-4a2f-b011-a657d97fb01e",
+      "name": "When chat message received",
+      "webhookId": "4226622b-e547-4ae5-b745-29f6245af0fa"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -64
+      ],
+      "id": "706b923b-be69-4a79-95e9-92ddd381b854",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        144
+      ],
+      "id": "ce0052e0-6b32-41f9-a73f-d1f28445fb81",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Getting Weather Information",
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=28.28&longitude=77.31&daily=sunrise,daylight_duration,rain_sum,sunshine_duration&hourly=temperature_2m&timezone=Asia%2FSingapore",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        128
+      ],
+      "id": "246e897a-08a7-4183-bcb6-d76df97a5a14",
+      "name": "get_weather"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Sends weather report email",
+        "sendTo": "sravanthim674@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', `3-4 word subject line that give a sneak peak of weather report and makes the email enticing to click on.`, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        704,
+        144
+      ],
+      "id": "c0ec5771-7f31-4190-8fae-74a3feae5c20",
+      "name": "send_email",
+      "webhookId": "ab3ce0f2-08b3-496e-bf28-7cc047bbfe2f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Le0AVXaGUnw9qfPH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        192,
+        144
+      ],
+      "id": "792ec655-2ddf-442d-a6f8-9fc2d17f871c",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "yeL2FVAsbPP82IMf",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "pvXEt2b8X5w3d3Tc",
+          "mode": "list",
+          "cachedResultName": "weather"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        128
+      ],
+      "id": "88fcfcd4-737f-49e6-9fb1-7ad9847fb91d",
+      "name": "Call n8n Workflow Tool"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_weather": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c17260c4-ebde-4803-be41-f5c766045931",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bd5112dc0066371e808c9f7bdd15371f8c02db0040b04012f154c1bad16fe613"
+  },
+  "id": "MOuPCUzqKe6eLfQt",
+  "tags": []
+}
